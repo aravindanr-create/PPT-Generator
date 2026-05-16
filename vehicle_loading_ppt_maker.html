@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vehicle Loading PPT Maker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.5px;
+  }
+
+  .header p {
+    color: #94a3b8;
+    margin-top: 6px;
+    font-size: 14px;
+  }
+
+  .badge {
+    display: inline-block;
+    background: #1e40af;
+    color: #bfdbfe;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .count-btn {
+    padding: 10px 28px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid #334155;
+    background: #1e293b;
+    color: #94a3b8;
+    transition: all 0.2s;
+  }
+
+  .count-btn.active {
+    border-color: #3b82f6;
+    background: #1d4ed8;
+    color: #fff;
+  }
+
+  .count-btn:hover:not(.active) {
+    border-color: #475569;
+    color: #e2e8f0;
+  }
+
+  .date-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .date-row label {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-right: 10px;
+    align-self: center;
+    font-weight: 500;
+  }
+
+  .date-row input {
+    background: #1e293b;
+    border: 1.5px solid #334155;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+    max-width: 1100px;
+    margin: 0 auto 32px;
+  }
+
+  .photo-card {
+    background: #1e293b;
+    border: 1.5px solid #334155;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .photo-card:hover {
+    border-color: #475569;
+  }
+
+  .card-header {
+    background: #162032;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #7dd3fc;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #2d3f56;
+  }
+
+  .card-num {
+    width: 22px;
+    height: 22px;
+    background: #1d4ed8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .photo-drop {
+    height: 170px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    background: #162032;
+    border-bottom: 1px solid #2d3f56;
+    transition: background 0.2s;
+  }
+
+  .photo-drop:hover {
+    background: #1a2a42;
+  }
+
+  .photo-drop.has-image {
+    padding: 0;
+  }
+
+  .photo-drop img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .photo-drop input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+    opacity: 0.4;
+  }
+
+  .upload-text {
+    font-size: 12px;
+    color: #64748b;
+    text-align: center;
+  }
+
+  .upload-text span {
+    color: #3b82f6;
+    font-weight: 600;
+  }
+
+  .card-fields {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .field-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .field-row .field { flex: 1; }
+
+  .field label {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .field input {
+    width: 100%;
+    background: #0f172a;
+    border: 1.5px solid #2d3f56;
+    color: #e2e8f0;
+    border-radius: 7px;
+    padding: 7px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+
+  .field input::placeholder { color: #374151; }
+
+  .preview-label {
+    font-size: 11px;
+    color: #475569;
+    padding: 8px 14px 0;
+    font-weight: 500;
+  }
+
+  .caption-preview {
+    font-size: 11px;
+    color: #7dd3fc;
+    padding: 4px 14px 10px;
+    min-height: 20px;
+    word-break: break-word;
+  }
+
+  .generate-row {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .gen-btn {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    color: #fff;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.2px;
+    box-shadow: 0 4px 16px rgba(59,130,246,0.3);
+  }
+
+  .gen-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.4); }
+  .gen-btn:active { transform: none; }
+  .gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .status {
+    text-align: center;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 12px auto;
+    max-width: 400px;
+    display: none;
+  }
+
+  .status.success {
+    background: #052e16;
+    color: #86efac;
+    border: 1px solid #166534;
+    display: block;
+  }
+
+  .status.error {
+    background: #450a0a;
+    color: #fca5a5;
+    border: 1px solid #991b1b;
+    display: block;
+  }
+
+  .tip {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 14px 18px;
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+  }
+
+  .tip strong { color: #94a3b8; }
+
+  .tip ul { padding-left: 16px; margin-top: 6px; }
+  .tip li { margin-bottom: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">🚛 Vehicle Loading</div>
+  <h1>PPT Auto-Generator</h1>
+  <p>Upload photos → Fill details → Download presentation instantly</p>
+</div>
+
+<div class="controls">
+  <button class="count-btn" onclick="setCount(2)">2 Photos</button>
+  <button class="count-btn active" onclick="setCount(3)">3 Photos</button>
+  <button class="count-btn" onclick="setCount(4)">4 Photos</button>
+  <button class="count-btn" onclick="setCount(5)">5 Photos</button>
+</div>
+
+<div class="date-row">
+  <label>📅 Date:</label>
+  <input type="text" id="dateInput" placeholder="e.g. 15-May-2025" />
+</div>
+
+<div class="cards-grid" id="cardsGrid"></div>
+
+<div class="generate-row">
+  <button class="gen-btn" onclick="generatePPT()">⬇️ Generate & Download PPT</button>
+</div>
+
+<div class="status" id="statusMsg"></div>
+
+<div class="tip">
+  <strong>💡 How it works:</strong>
+  <ul>
+    <li>Select how many photos (2–5)</li>
+    <li>Click each photo box to upload your vehicle image</li>
+    <li>Fill in vehicle number, driver, location & out-time</li>
+    <li>Hit Generate — 2 photos per slide, matching your template</li>
+  </ul>
+</div>
+
+<script>
+const LOGO_B64 = "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u0LYPfArivFnxP0jwl4ZttY1HT74teTNDa2xTY87L97bkgYHqQeQPWvBv7a8VXEBktPFWvRxnnZHqU5wPq2f0rN+KFjqWt6t4WW81G6upbPT0ie5uJGkYnduYFieuT+lAH1FomoNq+i2OosiRm6t0m2hsgbgDWV4/8ADR8WeC9Q0VXWOW4QCKRvuq4OVJ9s15R+xbdRN/wkdkWHnKYJwPVcEf1NfRlAHgfhj4keOPA2lf8ACPt4e+1LbZjhieB48RjOAp2kdMDr25r1TwnbeLdV8P2t34m1K1gnusOLa3t8CHj7rE5Ln6n8ua7WigDz3xb8H7LxJrEus2OqXWj6jOpSSa1AKyZGMlTxnHHfPeuk8F+EbbwXoqaXaXEk8QkMhkkABYkdeOK6CigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//2Q==";
+
+let photoCount = 3;
+let photoData = {};
+
+function setCount(n) {
+  photoCount = n;
+  document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('cardsGrid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= photoCount; i++) {
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-num">${i}</div>
+        Vehicle Photo ${i}
+      </div>
+      <div class="photo-drop" id="drop${i}" onclick="document.getElementById('fileInput${i}').click()">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text"><span>Click to upload</span><br>JPG, PNG supported</div>
+        <input type="file" id="fileInput${i}" accept="image/*" onchange="handleFile(${i}, this)" style="display:none">
+      </div>
+      <div class="card-fields">
+        <div class="field">
+          <label>Vehicle Number</label>
+          <input type="text" id="veh${i}" placeholder="e.g. TN 13 AK 1242" oninput="updatePreview(${i})">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Driver Name</label>
+            <input type="text" id="drv${i}" placeholder="e.g. Praveen" oninput="updatePreview(${i})">
+          </div>
+          <div class="field">
+            <label>Out Time</label>
+            <input type="text" id="tim${i}" placeholder="e.g. 4:45 AM" oninput="updatePreview(${i})">
+          </div>
+        </div>
+        <div class="field">
+          <label>Location</label>
+          <input type="text" id="loc${i}" placeholder="e.g. Collection warehouse" oninput="updatePreview(${i})">
+        </div>
+        <div class="preview-label">📝 Caption Preview:</div>
+        <div class="caption-preview" id="prev${i}">—</div>
+      </div>
+    `;
+    grid.appendChild(card);
+    // Restore data if exists
+    if (photoData[i]) {
+      setTimeout(() => {
+        document.getElementById(`veh${i}`).value = photoData[i].veh || '';
+        document.getElementById(`drv${i}`).value = photoData[i].drv || '';
+        document.getElementById(`tim${i}`).value = photoData[i].tim || '';
+        document.getElementById(`loc${i}`).value = photoData[i].loc || '';
+        if (photoData[i].imgSrc) {
+          const drop = document.getElementById(`drop${i}`);
+          drop.classList.add('has-image');
+          drop.innerHTML = `<img src="${photoData[i].imgSrc}"><input type="file" id="fileInput${i}" accept="image/*" onchange="handleFile(${i}, this)" style="display:none">`;
+        }
+        updatePreview(i);
+      }, 0);
+    }
+  }
+}
+
+function handleFile(idx, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const src = e.target.result;
+    const drop = document.getElementById(`drop${idx}`);
+    drop.classList.add('has-image');
+    drop.innerHTML = `<img src="${src}"><input type="file" id="fileInput${idx}" accept="image/*" onchange="handleFile(${idx}, this)" style="display:none">`;
+    drop.onclick = () => document.getElementById(`fileInput${idx}`).click();
+    if (!photoData[idx]) photoData[idx] = {};
+    photoData[idx].imgSrc = src;
+    photoData[idx].imgFile = file;
+  };
+  reader.readAsDataURL(file);
+}
+
+function updatePreview(idx) {
+  const veh = document.getElementById(`veh${idx}`)?.value || '';
+  const drv = document.getElementById(`drv${idx}`)?.value || '';
+  const loc = document.getElementById(`loc${idx}`)?.value || '';
+  const tim = document.getElementById(`tim${idx}`)?.value || '';
+  if (!photoData[idx]) photoData[idx] = {};
+  photoData[idx].veh = veh; photoData[idx].drv = drv;
+  photoData[idx].loc = loc; photoData[idx].tim = tim;
+  const caption = buildCaption(veh, drv, loc, tim);
+  const prev = document.getElementById(`prev${idx}`);
+  if (prev) prev.textContent = caption || '—';
+}
+
+function buildCaption(veh, drv, loc, tim) {
+  let parts = [];
+  if (veh) parts.push(veh);
+  if (drv) parts.push(drv);
+  if (loc) parts.push(loc);
+  if (tim) parts.push('Out time - ' + tim);
+  return parts.join(' ');
+}
+
+async function generatePPT() {
+  const statusEl = document.getElementById('statusMsg');
+  statusEl.className = 'status';
+  statusEl.style.display = 'none';
+
+  // Validate
+  let missing = [];
+  for (let i = 1; i <= photoCount; i++) {
+    if (!photoData[i]?.imgSrc) missing.push(`Photo ${i}`);
+  }
+  if (missing.length) {
+    statusEl.textContent = '⚠️ Please upload: ' + missing.join(', ');
+    statusEl.className = 'status error';
+    return;
+  }
+
+  const dateVal = document.getElementById('dateInput').value || new Date().toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+  const btn = document.querySelector('.gen-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating...';
+
+  try {
+    const pptx = new PptxGenJS();
+    pptx.layout = 'LAYOUT_WIDE';
+    pptx.defineLayout({ name: 'WIDE', width: 10, height: 5.625 });
+
+    // Slide layout: 2 per slide
+    const slides = [];
+    for (let i = 0; i < photoCount; i += 2) {
+      slides.push([i + 1, i + 2 <= photoCount ? i + 2 : null]);
+    }
+
+    for (const [leftIdx, rightIdx] of slides) {
+      const slide = pptx.addSlide();
+      slide.background = { color: 'FFFFFF' };
+
+      // Logo top-left
+      slide.addImage({
+        data: 'data:image/jpeg;base64,' + LOGO_B64,
+        x: 0.05, y: 0.02, w: 1.36, h: 0.65
+      });
+
+      // Date top-right
+      slide.addText(dateVal, {
+        x: 7.5, y: 0.05, w: 2.4, h: 0.4,
+        fontSize: 11, color: '475569', align: 'right', italic: true
+      });
+
+      // Left photo + caption
+      const ld = photoData[leftIdx];
+      slide.addImage({
+        data: ld.imgSrc,
+        x: 0.80, y: 0.78, w: 3.80, h: 4.27,
+        sizing: { type: 'contain', w: 3.80, h: 4.27 }
+      });
+      const leftCaption = buildCaption(ld.veh, ld.drv, ld.loc, ld.tim);
+      slide.addText(leftCaption || ' ', {
+        x: 0.80, y: 5.13, w: 3.80, h: 0.45,
+        fontSize: 10, color: '1e293b', align: 'center',
+        fill: { color: 'f1f5f9' }, bold: false,
+        wrap: true
+      });
+
+      if (rightIdx) {
+        const rd = photoData[rightIdx];
+        slide.addImage({
+          data: rd.imgSrc,
+          x: 5.30, y: 0.73, w: 3.80, h: 4.32,
+          sizing: { type: 'contain', w: 3.80, h: 4.32 }
+        });
+        const rightCaption = buildCaption(rd.veh, rd.drv, rd.loc, rd.tim);
+        slide.addText(rightCaption || ' ', {
+          x: 5.30, y: 5.13, w: 3.80, h: 0.45,
+          fontSize: 10, color: '1e293b', align: 'center',
+          fill: { color: 'f1f5f9' }, bold: false,
+          wrap: true
+        });
+      }
+    }
+
+    const fileName = `Vehicle_Loading_${dateVal.replace(/[^a-zA-Z0-9]/g, '_')}.pptx`;
+    await pptx.writeFile({ fileName });
+
+    statusEl.textContent = '✅ PPT downloaded: ' + fileName;
+    statusEl.className = 'status success';
+  } catch (err) {
+    statusEl.textContent = '❌ Error: ' + err.message;
+    statusEl.className = 'status error';
+  }
+
+  btn.disabled = false;
+  btn.textContent = '⬇️ Generate & Download PPT';
+}
+
+// Init
+const today = new Date();
+document.getElementById('dateInput').value = today.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+renderCards();
+</script>
+</body>
+</html>
